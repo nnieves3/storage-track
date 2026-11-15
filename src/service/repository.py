@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from service.models import InventoryItem, Location, SubLocation
+from .models import InventoryItem, Location, SubLocation
 
 
 class InventoryRepository(Protocol):

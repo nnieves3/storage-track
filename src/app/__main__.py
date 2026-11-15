@@ -1,19 +1,11 @@
 import os
 
-from data import DatabaseConfig, PostgresInventoryRepository
-from service import InventoryService
+from service import InventoryService, create_inventory_repository_from_env
 from . import create_app
 
 
 def main() -> None:
-    config = DatabaseConfig(
-        host=os.getenv("STORAGE_TRACK_DB_HOST", "localhost"),
-        port=int(os.getenv("STORAGE_TRACK_DB_PORT", "5432")),
-        database=os.getenv("STORAGE_TRACK_DB_NAME", "storage_track"),
-        user=os.getenv("STORAGE_TRACK_DB_USER", "postgres"),
-        password=os.getenv("STORAGE_TRACK_DB_PASSWORD"),
-    )
-    service = InventoryService(PostgresInventoryRepository(config))
+    service = InventoryService(create_inventory_repository_from_env())
     service.initialize()
 
     app = create_app(service)

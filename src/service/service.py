@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from .models import InventoryItem, Location, SubLocation
 
 if TYPE_CHECKING:
-    from data import InventoryRepository
+    from .repository import InventoryRepository
 
 
 class InventoryService:

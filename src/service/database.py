@@ -2,7 +2,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, LiteralString
 
-from service.models import InventoryItem, Location, SubLocation
+from .models import InventoryItem, Location, SubLocation
 from .repository import InventoryRepository
 
 

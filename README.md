@@ -2,7 +2,7 @@
 
 `storage-track` tracks physical items with a REST API and a separate inventory
 service. The API lives in `app`; inventory models and operations live in
-`service`. Storage contracts and implementations live in `data`, with
+`service`. The repository contract and storage adapters live in `service`, with
 PostgreSQL provided as the default implementation.
 
 ## Install
@@ -14,8 +14,11 @@ python3 -m pip install -e .
 ## Basic usage
 
 ```python
-from data import DatabaseConfig, PostgresInventoryRepository
-from service import InventoryService
+from service import (
+    DatabaseConfig,
+    InventoryService,
+    PostgresInventoryRepository,
+)
 
 config = DatabaseConfig(
     host="localhost",
@@ -49,8 +52,7 @@ than PostgreSQL. `PostgresInventoryRepository` is the included implementation;
 you can supply another implementation when constructing the service:
 
 ```python
-from data import InventoryRepository
-from service import InventoryService
+from service import InventoryRepository, InventoryService
 
 
 class MyInventoryRepository:
@@ -62,11 +64,12 @@ inventory = InventoryService(MyInventoryRepository())
 ```
 
 The protocol defines storage operations for items, locations, and sub-locations.
-Any backend (for example MySQL, a document database, or a pandas-backed
-spreadsheet) should implement that complete contract and preserve the inventory
-validation and relationship behavior expected by the service. Backend-specific
-configuration and dependencies belong in that implementation; the core package
-does not select a backend automatically.
+Any backend (for example MySQL or a document database) should implement that
+complete contract and preserve the inventory validation and relationship
+behavior expected by the service. The API launcher selects the adapter with
+`STORAGE_TRACK_BACKEND`; it defaults to `postgres` and fails at startup for an
+unsupported value. Backend-specific configuration and dependencies belong in
+the corresponding adapter.
 
 ## Locations
 
@@ -107,7 +110,10 @@ python3 -m pip install -e .
 storage-track-api
 ```
 
-The launcher initializes the configured repository before serving the API.
+The launcher selects and initializes the configured repository before serving
+the API. Set `STORAGE_TRACK_BACKEND=postgres` to use the PostgreSQL adapter.
+The launcher currently supports only `postgres`; adding another backend
+requires an adapter implementing `InventoryRepository`.
 Set `STORAGE_TRACK_DB_HOST`, `STORAGE_TRACK_DB_PORT`,
 `STORAGE_TRACK_DB_NAME`, `STORAGE_TRACK_DB_USER`, and
 `STORAGE_TRACK_DB_PASSWORD` to configure PostgreSQL. The HTTP listener defaults
