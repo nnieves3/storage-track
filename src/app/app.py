@@ -1,10 +1,50 @@
+from typing import Protocol
+
 from flask import Flask, Response, jsonify, request
 
-from service import InventoryService
+from service import InventoryItem, Location, SubLocation
+from service.grpc_client import ServiceUnavailableError
 
 
-def create_app(service: InventoryService) -> Flask:
+class InventoryApi(Protocol):
+    def list_items(self) -> list[InventoryItem]: ...
+    def get_item(self, item_id: int) -> InventoryItem | None: ...
+    def add_or_increment_item(
+        self,
+        name: str,
+        count: int = 1,
+        description: str = "",
+        location_id: int | None = None,
+        sub_location_id: int | None = None,
+    ) -> InventoryItem: ...
+    def remove_item_quantity(
+        self, item_id: int, quantity: int = 1
+    ) -> InventoryItem | None: ...
+    def check_out(self, item_id: int) -> InventoryItem | None: ...
+    def check_in(self, item_id: int) -> InventoryItem | None: ...
+    def move_item(
+        self, item_id: int, location_id: int, sub_location_id: int | None = None
+    ) -> InventoryItem | None: ...
+    def list_locations(self) -> list[Location]: ...
+    def get_location(self, location_id: int) -> Location | None: ...
+    def create_location(self, name: str) -> Location: ...
+    def remove_location(self, location_id: int) -> bool: ...
+    def create_sub_location(
+        self, location_id: int, name: str
+    ) -> SubLocation | None: ...
+    def remove_sub_location(
+        self, location_id: int, sub_location_id: int
+    ) -> bool: ...
+
+
+def create_app(service: InventoryApi) -> Flask:
     app = Flask(__name__)
+
+    @app.errorhandler(ServiceUnavailableError)
+    def handle_service_unavailable(
+        error: ServiceUnavailableError,
+    ) -> tuple[Response, int]:
+        return jsonify(error=str(error)), 503
 
     @app.errorhandler(ValueError)
     def handle_value_error(error: ValueError) -> tuple[Response, int]:

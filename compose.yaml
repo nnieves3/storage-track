@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-storage_track}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-storage-track}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  inventory-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+    environment:
+      STORAGE_TRACK_DB_HOST: postgres
+      STORAGE_TRACK_DB_PORT: "5432"
+      STORAGE_TRACK_DB_NAME: ${POSTGRES_DB:-storage_track}
+      STORAGE_TRACK_DB_USER: ${POSTGRES_USER:-postgres}
+      STORAGE_TRACK_DB_PASSWORD: ${POSTGRES_PASSWORD:-storage-track}
+      STORAGE_TRACK_GRPC_HOST: 0.0.0.0
+      STORAGE_TRACK_GRPC_PORT: "50051"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import grpc; channel = grpc.insecure_channel('localhost:50051'); grpc.channel_ready_future(channel).result(timeout=2); channel.close()"
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      STORAGE_TRACK_HOST: 0.0.0.0
+      STORAGE_TRACK_PORT: "5000"
+      STORAGE_TRACK_SERVICE_ADDRESS: inventory-service:50051
+    depends_on:
+      inventory-service:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+
+volumes:
+  postgres-data:

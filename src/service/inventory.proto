@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package storage_track.v1;
+
+import "google/protobuf/empty.proto";
+
+service Inventory {
+  rpc ListItems(google.protobuf.Empty) returns (ListItemsResponse);
+  rpc GetItem(IdRequest) returns (Item);
+  rpc AddOrIncrementItem(AddItemRequest) returns (Item);
+  rpc RemoveItemQuantity(RemoveItemRequest) returns (Item);
+  rpc CheckOut(IdRequest) returns (Item);
+  rpc CheckIn(IdRequest) returns (Item);
+  rpc MoveItem(MoveItemRequest) returns (Item);
+  rpc ListLocations(google.protobuf.Empty) returns (ListLocationsResponse);
+  rpc GetLocation(IdRequest) returns (Location);
+  rpc CreateLocation(NameRequest) returns (Location);
+  rpc RemoveLocation(IdRequest) returns (RemoveResponse);
+  rpc CreateSubLocation(CreateSubLocationRequest) returns (SubLocation);
+  rpc RemoveSubLocation(RemoveSubLocationRequest) returns (RemoveResponse);
+}
+
+message IdRequest {
+  int64 id = 1;
+}
+
+message NameRequest {
+  string name = 1;
+}
+
+message AddItemRequest {
+  string name = 1;
+  int64 count = 2;
+  string description = 3;
+  optional int64 location_id = 4;
+  optional int64 sub_location_id = 5;
+}
+
+message RemoveItemRequest {
+  int64 item_id = 1;
+  int64 quantity = 2;
+}
+
+message MoveItemRequest {
+  int64 item_id = 1;
+  int64 location_id = 2;
+  optional int64 sub_location_id = 3;
+}
+
+message CreateSubLocationRequest {
+  int64 location_id = 1;
+  string name = 2;
+}
+
+message RemoveSubLocationRequest {
+  int64 location_id = 1;
+  int64 sub_location_id = 2;
+}
+
+message RemoveResponse {
+  bool removed = 1;
+}
+
+message ListItemsResponse {
+  repeated Item items = 1;
+}
+
+message ListLocationsResponse {
+  repeated Location locations = 1;
+}
+
+message Item {
+  optional int64 id = 1;
+  string name = 2;
+  string description = 3;
+  int64 count = 4;
+  Location location = 5;
+  SubLocation sub_location = 6;
+  bool checked_out = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+message Location {
+  optional int64 id = 1;
+  string name = 2;
+  repeated SubLocation sub_locations = 3;
+}
+
+message SubLocation {
+  optional int64 id = 1;
+  string name = 2;
+  optional int64 location_id = 3;
+}
