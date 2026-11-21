@@ -87,7 +87,7 @@ class InventoryStub:
                 _registered_method=True)
         self.RemoveLocation = channel.unary_unary(
                 '/storage_track.v1.Inventory/RemoveLocation',
-                request_serializer=service_dot_inventory__pb2.IdRequest.SerializeToString,
+                request_serializer=service_dot_inventory__pb2.RemoveLocationRequest.SerializeToString,
                 response_deserializer=service_dot_inventory__pb2.RemoveResponse.FromString,
                 _registered_method=True)
         self.CreateSubLocation = channel.unary_unary(
@@ -238,7 +238,7 @@ def add_InventoryServicer_to_server(servicer, server):
             ),
             'RemoveLocation': grpc.unary_unary_rpc_method_handler(
                     servicer.RemoveLocation,
-                    request_deserializer=service_dot_inventory__pb2.IdRequest.FromString,
+                    request_deserializer=service_dot_inventory__pb2.RemoveLocationRequest.FromString,
                     response_serializer=service_dot_inventory__pb2.RemoveResponse.SerializeToString,
             ),
             'CreateSubLocation': grpc.unary_unary_rpc_method_handler(
@@ -547,7 +547,7 @@ class Inventory:
             request,
             target,
             '/storage_track.v1.Inventory/RemoveLocation',
-            service_dot_inventory__pb2.IdRequest.SerializeToString,
+            service_dot_inventory__pb2.RemoveLocationRequest.SerializeToString,
             service_dot_inventory__pb2.RemoveResponse.FromString,
             options,
             channel_credentials,

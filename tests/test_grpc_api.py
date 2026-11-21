@@ -90,6 +90,36 @@ class GrpcInventoryClientTests(unittest.TestCase):
         self.assertEqual(response.status_code, 503)
         self.assertEqual(response.get_json(), {"error": "service offline"})
 
+    def test_location_delete_cascade_flag_is_forwarded_over_rest_and_grpc(self) -> None:
+        self.service.remove_location.return_value = True
+        response = create_app(self.client).test_client().delete(
+            "/locations/4?cascade=true"
+        )
+
+        self.assertEqual(response.status_code, 204)
+        self.service.remove_location.assert_called_once_with(4, cascade=True)
+
+    def test_location_delete_defaults_to_protected_behavior(self) -> None:
+        api_service = Mock()
+        api_service.remove_location.side_effect = ValueError(
+            "location cannot be removed while items are assigned to it"
+        )
+
+        response = create_app(api_service).test_client().delete("/locations/4")
+
+        self.assertEqual(response.status_code, 400)
+        api_service.remove_location.assert_called_once_with(4, cascade=False)
+
+    def test_location_delete_rejects_invalid_cascade_value(self) -> None:
+        api_service = Mock()
+
+        response = create_app(api_service).test_client().delete(
+            "/locations/4?cascade=maybe"
+        )
+
+        self.assertEqual(response.status_code, 400)
+        api_service.remove_location.assert_not_called()
+
     def test_sub_location_without_location_is_rejected_before_repository_calls(
         self,
     ) -> None:

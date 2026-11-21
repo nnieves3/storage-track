@@ -168,16 +168,33 @@ class PostgresInventoryRepository(InventoryRepository):
                     if (location := self.get_location(row[0])) is not None
                 ]
 
-    def remove_location(self, location_id: int) -> bool:
+    def remove_location(self, location_id: int, cascade: bool = False) -> bool:
         with self._connect(self.config.dsn) as connection:
             with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    SELECT id FROM inventory_locations
+                    WHERE id = %s
+                    FOR UPDATE
+                    """,
+                    (location_id,),
+                )
+                if cursor.fetchone() is None:
+                    return False
                 cursor.execute(
                     "SELECT COUNT(*) FROM inventory_items WHERE location_id = %s",
                     (location_id,),
                 )
                 item_count = cursor.fetchone()
-                if item_count is None or item_count[0] > 0:
+                if item_count is None:
+                    raise RuntimeError("failed to count items in inventory location")
+                if item_count[0] > 0 and not cascade:
                     raise ValueError("location cannot be removed while items are assigned to it")
+                if cascade:
+                    cursor.execute(
+                        "DELETE FROM inventory_items WHERE location_id = %s",
+                        (location_id,),
+                    )
                 cursor.execute(
                     "DELETE FROM inventory_sub_locations WHERE location_id = %s",
                     (location_id,),

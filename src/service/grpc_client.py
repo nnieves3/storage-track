@@ -186,9 +186,10 @@ class GrpcInventoryClient:
         assert isinstance(response, pb.Location)
         return _from_proto_location(response)
 
-    def remove_location(self, location_id: int) -> bool:
+    def remove_location(self, location_id: int, cascade: bool = False) -> bool:
         response = self._call(
-            self._stub.RemoveLocation, pb.IdRequest(id=location_id)
+            self._stub.RemoveLocation,
+            pb.RemoveLocationRequest(id=location_id, cascade=cascade),
         )
         assert isinstance(response, pb.RemoveResponse)
         return response.removed

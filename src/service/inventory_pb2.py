@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17service/inventory.proto\x12\x10storage_track.v1\x1a\x1bgoogle/protobuf/empty.proto\"\x17\n\tIdRequest\x12\n\n\x02id\x18\x01 \x01(\x03\"\x1b\n\x0bNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"\x9e\x01\n\x0e\x41\x64\x64ItemRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\x03\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x18\n\x0blocation_id\x18\x04 \x01(\x03H\x00\x88\x01\x01\x12\x1c\n\x0fsub_location_id\x18\x05 \x01(\x03H\x01\x88\x01\x01\x42\x0e\n\x0c_location_idB\x12\n\x10_sub_location_id\"6\n\x11RemoveItemRequest\x12\x0f\n\x07item_id\x18\x01 \x01(\x03\x12\x10\n\x08quantity\x18\x02 \x01(\x03\"i\n\x0fMoveItemRequest\x12\x0f\n\x07item_id\x18\x01 \x01(\x03\x12\x13\n\x0blocation_id\x18\x02 \x01(\x03\x12\x1c\n\x0fsub_location_id\x18\x03 \x01(\x03H\x00\x88\x01\x01\x42\x12\n\x10_sub_location_id\"=\n\x18\x43reateSubLocationRequest\x12\x13\n\x0blocation_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\"H\n\x18RemoveSubLocationRequest\x12\x13\n\x0blocation_id\x18\x01 \x01(\x03\x12\x17\n\x0fsub_location_id\x18\x02 \x01(\x03\"!\n\x0eRemoveResponse\x12\x0f\n\x07removed\x18\x01 \x01(\x08\":\n\x11ListItemsResponse\x12%\n\x05items\x18\x01 \x03(\x0b\x32\x16.storage_track.v1.Item\"F\n\x15ListLocationsResponse\x12-\n\tlocations\x18\x01 \x03(\x0b\x32\x1a.storage_track.v1.Location\"\xf0\x01\n\x04Item\x12\x0f\n\x02id\x18\x01 \x01(\x03H\x00\x88\x01\x01\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\r\n\x05\x63ount\x18\x04 \x01(\x03\x12,\n\x08location\x18\x05 \x01(\x0b\x32\x1a.storage_track.v1.Location\x12\x33\n\x0csub_location\x18\x06 \x01(\x0b\x32\x1d.storage_track.v1.SubLocation\x12\x13\n\x0b\x63hecked_out\x18\x07 \x01(\x08\x12\x12\n\ncreated_at\x18\x08 \x01(\t\x12\x12\n\nupdated_at\x18\t \x01(\tB\x05\n\x03_id\"f\n\x08Location\x12\x0f\n\x02id\x18\x01 \x01(\x03H\x00\x88\x01\x01\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x34\n\rsub_locations\x18\x03 \x03(\x0b\x32\x1d.storage_track.v1.SubLocationB\x05\n\x03_id\"]\n\x0bSubLocation\x12\x0f\n\x02id\x18\x01 \x01(\x03H\x00\x88\x01\x01\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x18\n\x0blocation_id\x18\x03 \x01(\x03H\x01\x88\x01\x01\x42\x05\n\x03_idB\x0e\n\x0c_location_id2\xfb\x07\n\tInventory\x12H\n\tListItems\x12\x16.google.protobuf.Empty\x1a#.storage_track.v1.ListItemsResponse\x12>\n\x07GetItem\x12\x1b.storage_track.v1.IdRequest\x1a\x16.storage_track.v1.Item\x12N\n\x12\x41\x64\x64OrIncrementItem\x12 .storage_track.v1.AddItemRequest\x1a\x16.storage_track.v1.Item\x12Q\n\x12RemoveItemQuantity\x12#.storage_track.v1.RemoveItemRequest\x1a\x16.storage_track.v1.Item\x12?\n\x08\x43heckOut\x12\x1b.storage_track.v1.IdRequest\x1a\x16.storage_track.v1.Item\x12>\n\x07\x43heckIn\x12\x1b.storage_track.v1.IdRequest\x1a\x16.storage_track.v1.Item\x12\x45\n\x08MoveItem\x12!.storage_track.v1.MoveItemRequest\x1a\x16.storage_track.v1.Item\x12P\n\rListLocations\x12\x16.google.protobuf.Empty\x1a\'.storage_track.v1.ListLocationsResponse\x12\x46\n\x0bGetLocation\x12\x1b.storage_track.v1.IdRequest\x1a\x1a.storage_track.v1.Location\x12K\n\x0e\x43reateLocation\x12\x1d.storage_track.v1.NameRequest\x1a\x1a.storage_track.v1.Location\x12O\n\x0eRemoveLocation\x12\x1b.storage_track.v1.IdRequest\x1a .storage_track.v1.RemoveResponse\x12^\n\x11\x43reateSubLocation\x12*.storage_track.v1.CreateSubLocationRequest\x1a\x1d.storage_track.v1.SubLocation\x12\x61\n\x11RemoveSubLocation\x12*.storage_track.v1.RemoveSubLocationRequest\x1a .storage_track.v1.RemoveResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17service/inventory.proto\x12\x10storage_track.v1\x1a\x1bgoogle/protobuf/empty.proto\"\x17\n\tIdRequest\x12\n\n\x02id\x18\x01 \x01(\x03\"\x1b\n\x0bNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\"4\n\x15RemoveLocationRequest\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0f\n\x07\x63\x61scade\x18\x02 \x01(\x08\"\x9e\x01\n\x0e\x41\x64\x64ItemRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\x03\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x18\n\x0blocation_id\x18\x04 \x01(\x03H\x00\x88\x01\x01\x12\x1c\n\x0fsub_location_id\x18\x05 \x01(\x03H\x01\x88\x01\x01\x42\x0e\n\x0c_location_idB\x12\n\x10_sub_location_id\"6\n\x11RemoveItemRequest\x12\x0f\n\x07item_id\x18\x01 \x01(\x03\x12\x10\n\x08quantity\x18\x02 \x01(\x03\"i\n\x0fMoveItemRequest\x12\x0f\n\x07item_id\x18\x01 \x01(\x03\x12\x13\n\x0blocation_id\x18\x02 \x01(\x03\x12\x1c\n\x0fsub_location_id\x18\x03 \x01(\x03H\x00\x88\x01\x01\x42\x12\n\x10_sub_location_id\"=\n\x18\x43reateSubLocationRequest\x12\x13\n\x0blocation_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\"H\n\x18RemoveSubLocationRequest\x12\x13\n\x0blocation_id\x18\x01 \x01(\x03\x12\x17\n\x0fsub_location_id\x18\x02 \x01(\x03\"!\n\x0eRemoveResponse\x12\x0f\n\x07removed\x18\x01 \x01(\x08\":\n\x11ListItemsResponse\x12%\n\x05items\x18\x01 \x03(\x0b\x32\x16.storage_track.v1.Item\"F\n\x15ListLocationsResponse\x12-\n\tlocations\x18\x01 \x03(\x0b\x32\x1a.storage_track.v1.Location\"\xf0\x01\n\x04Item\x12\x0f\n\x02id\x18\x01 \x01(\x03H\x00\x88\x01\x01\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\r\n\x05\x63ount\x18\x04 \x01(\x03\x12,\n\x08location\x18\x05 \x01(\x0b\x32\x1a.storage_track.v1.Location\x12\x33\n\x0csub_location\x18\x06 \x01(\x0b\x32\x1d.storage_track.v1.SubLocation\x12\x13\n\x0b\x63hecked_out\x18\x07 \x01(\x08\x12\x12\n\ncreated_at\x18\x08 \x01(\t\x12\x12\n\nupdated_at\x18\t \x01(\tB\x05\n\x03_id\"f\n\x08Location\x12\x0f\n\x02id\x18\x01 \x01(\x03H\x00\x88\x01\x01\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x34\n\rsub_locations\x18\x03 \x03(\x0b\x32\x1d.storage_track.v1.SubLocationB\x05\n\x03_id\"]\n\x0bSubLocation\x12\x0f\n\x02id\x18\x01 \x01(\x03H\x00\x88\x01\x01\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x18\n\x0blocation_id\x18\x03 \x01(\x03H\x01\x88\x01\x01\x42\x05\n\x03_idB\x0e\n\x0c_location_id2\x87\x08\n\tInventory\x12H\n\tListItems\x12\x16.google.protobuf.Empty\x1a#.storage_track.v1.ListItemsResponse\x12>\n\x07GetItem\x12\x1b.storage_track.v1.IdRequest\x1a\x16.storage_track.v1.Item\x12N\n\x12\x41\x64\x64OrIncrementItem\x12 .storage_track.v1.AddItemRequest\x1a\x16.storage_track.v1.Item\x12Q\n\x12RemoveItemQuantity\x12#.storage_track.v1.RemoveItemRequest\x1a\x16.storage_track.v1.Item\x12?\n\x08\x43heckOut\x12\x1b.storage_track.v1.IdRequest\x1a\x16.storage_track.v1.Item\x12>\n\x07\x43heckIn\x12\x1b.storage_track.v1.IdRequest\x1a\x16.storage_track.v1.Item\x12\x45\n\x08MoveItem\x12!.storage_track.v1.MoveItemRequest\x1a\x16.storage_track.v1.Item\x12P\n\rListLocations\x12\x16.google.protobuf.Empty\x1a\'.storage_track.v1.ListLocationsResponse\x12\x46\n\x0bGetLocation\x12\x1b.storage_track.v1.IdRequest\x1a\x1a.storage_track.v1.Location\x12K\n\x0e\x43reateLocation\x12\x1d.storage_track.v1.NameRequest\x1a\x1a.storage_track.v1.Location\x12[\n\x0eRemoveLocation\x12\'.storage_track.v1.RemoveLocationRequest\x1a .storage_track.v1.RemoveResponse\x12^\n\x11\x43reateSubLocation\x12*.storage_track.v1.CreateSubLocationRequest\x1a\x1d.storage_track.v1.SubLocation\x12\x61\n\x11RemoveSubLocation\x12*.storage_track.v1.RemoveSubLocationRequest\x1a .storage_track.v1.RemoveResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,28 +36,30 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_IDREQUEST']._serialized_end=97
   _globals['_NAMEREQUEST']._serialized_start=99
   _globals['_NAMEREQUEST']._serialized_end=126
-  _globals['_ADDITEMREQUEST']._serialized_start=129
-  _globals['_ADDITEMREQUEST']._serialized_end=287
-  _globals['_REMOVEITEMREQUEST']._serialized_start=289
-  _globals['_REMOVEITEMREQUEST']._serialized_end=343
-  _globals['_MOVEITEMREQUEST']._serialized_start=345
-  _globals['_MOVEITEMREQUEST']._serialized_end=450
-  _globals['_CREATESUBLOCATIONREQUEST']._serialized_start=452
-  _globals['_CREATESUBLOCATIONREQUEST']._serialized_end=513
-  _globals['_REMOVESUBLOCATIONREQUEST']._serialized_start=515
-  _globals['_REMOVESUBLOCATIONREQUEST']._serialized_end=587
-  _globals['_REMOVERESPONSE']._serialized_start=589
-  _globals['_REMOVERESPONSE']._serialized_end=622
-  _globals['_LISTITEMSRESPONSE']._serialized_start=624
-  _globals['_LISTITEMSRESPONSE']._serialized_end=682
-  _globals['_LISTLOCATIONSRESPONSE']._serialized_start=684
-  _globals['_LISTLOCATIONSRESPONSE']._serialized_end=754
-  _globals['_ITEM']._serialized_start=757
-  _globals['_ITEM']._serialized_end=997
-  _globals['_LOCATION']._serialized_start=999
-  _globals['_LOCATION']._serialized_end=1101
-  _globals['_SUBLOCATION']._serialized_start=1103
-  _globals['_SUBLOCATION']._serialized_end=1196
-  _globals['_INVENTORY']._serialized_start=1199
-  _globals['_INVENTORY']._serialized_end=2218
+  _globals['_REMOVELOCATIONREQUEST']._serialized_start=128
+  _globals['_REMOVELOCATIONREQUEST']._serialized_end=180
+  _globals['_ADDITEMREQUEST']._serialized_start=183
+  _globals['_ADDITEMREQUEST']._serialized_end=341
+  _globals['_REMOVEITEMREQUEST']._serialized_start=343
+  _globals['_REMOVEITEMREQUEST']._serialized_end=397
+  _globals['_MOVEITEMREQUEST']._serialized_start=399
+  _globals['_MOVEITEMREQUEST']._serialized_end=504
+  _globals['_CREATESUBLOCATIONREQUEST']._serialized_start=506
+  _globals['_CREATESUBLOCATIONREQUEST']._serialized_end=567
+  _globals['_REMOVESUBLOCATIONREQUEST']._serialized_start=569
+  _globals['_REMOVESUBLOCATIONREQUEST']._serialized_end=641
+  _globals['_REMOVERESPONSE']._serialized_start=643
+  _globals['_REMOVERESPONSE']._serialized_end=676
+  _globals['_LISTITEMSRESPONSE']._serialized_start=678
+  _globals['_LISTITEMSRESPONSE']._serialized_end=736
+  _globals['_LISTLOCATIONSRESPONSE']._serialized_start=738
+  _globals['_LISTLOCATIONSRESPONSE']._serialized_end=808
+  _globals['_ITEM']._serialized_start=811
+  _globals['_ITEM']._serialized_end=1051
+  _globals['_LOCATION']._serialized_start=1053
+  _globals['_LOCATION']._serialized_end=1155
+  _globals['_SUBLOCATION']._serialized_start=1157
+  _globals['_SUBLOCATION']._serialized_end=1250
+  _globals['_INVENTORY']._serialized_start=1253
+  _globals['_INVENTORY']._serialized_end=2284
 # @@protoc_insertion_point(module_scope)

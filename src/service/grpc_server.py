@@ -177,12 +177,14 @@ class InventoryGrpcServicer(pb_grpc.InventoryServicer):
         )
 
     def RemoveLocation(
-        self, request: pb.IdRequest, context: grpc.ServicerContext
+        self, request: pb.RemoveLocationRequest, context: grpc.ServicerContext
     ) -> pb.RemoveResponse:
         return _run(
             context,
             lambda: pb.RemoveResponse(
-                removed=self._service.remove_location(request.id)
+                removed=self._service.remove_location(
+                    request.id, cascade=request.cascade
+                )
             ),
         )
 
