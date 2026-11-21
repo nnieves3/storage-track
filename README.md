@@ -152,18 +152,25 @@ Available endpoints:
 
 | Method | Route | Purpose |
 |---|---|---|
+| `GET` | `/health` | Check API health |
 | `GET` | `/items` | List items |
 | `GET` | `/items/<id>` | Get an item |
-| `POST` | `/items` | Add or increment an item |
+| `POST` | `/items` | Add or increment an item; optional `location_id` and `sub_location_id` assign its location |
 | `DELETE` | `/items/<id>?count=N` | Reduce an item count; omit `count` to reduce by 1, or use `0` to remove it |
 | `POST` | `/items/<id>/checkout` | Mark the item as checked out |
 | `POST` | `/items/<id>/checkin` | Mark the item as not checked out |
-| `PATCH` | `/items/<id>/move` | Change general and specific locations |
+| `PATCH` | `/items/<id>/move` | Move an item using `location_id` and optional `sub_location_id` |
+| `GET` | `/locations` | List locations and their sub-locations |
+| `GET` | `/locations/<location_id>` | Get a location and its sub-locations |
+| `POST` | `/locations` | Create a location (also creates its default `Other` sub-location) |
+| `DELETE` | `/locations/<location_id>` | Remove a location if no items are assigned to it |
+| `POST` | `/locations/<location_id>/sub-locations` | Create a sub-location |
+| `DELETE` | `/locations/<location_id>/sub-locations/<sub_location_id>` | Remove a sub-location if it is not the default and has no assigned items |
 
 Example add request:
 
 ```bash
 curl -X POST http://127.0.0.1:5000/items \
   -H 'Content-Type: application/json' \
-  -d '{"name":"Camping lantern","count":2,"general_location":"Garage","specific_location":"Shelf B"}'
+  -d '{"name":"Camping lantern","count":2,"location_id":1,"sub_location_id":2}'
 ```
