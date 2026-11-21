@@ -1,14 +1,13 @@
 # storage-track
 
-`storage-track` tracks physical items with a REST API and a separate inventory
-service. The API lives in `app`; inventory models and operations live in
-`service`. The repository contract and storage adapters live in `service`, with
-PostgreSQL provided as the default implementation.
+`storage-track` tracks physical items with a REST API and a separate gRPC
+inventory service. The API lives in `app`; inventory models, operations, and
+the gRPC server live in `service`. PostgreSQL is the default storage backend.
 
 ## Install
 
 ```bash
-python3 -m pip install -e .
+python3 -m pip install -e '.[postgres]'
 ```
 
 ## Basic usage
@@ -66,7 +65,7 @@ inventory = InventoryService(MyInventoryRepository())
 The protocol defines storage operations for items, locations, and sub-locations.
 Any backend (for example MySQL or a document database) should implement that
 complete contract and preserve the inventory validation and relationship
-behavior expected by the service. The API launcher selects the adapter with
+behavior expected by the service. The gRPC service launcher selects the adapter with
 `STORAGE_TRACK_BACKEND`; it defaults to `postgres` and fails at startup for an
 unsupported value. Backend-specific configuration and dependencies belong in
 the corresponding adapter.
@@ -103,22 +102,51 @@ curl -X PATCH http://127.0.0.1:5000/items/1/move \
 
 ## REST API
 
-Install and start with the package's Flask dependency:
+Run the API and gRPC service in separate terminals:
 
 ```bash
-python3 -m pip install -e .
-storage-track-api
+python3 -m pip install -e '.[postgres]'
+# Terminal 1
+STORAGE_TRACK_DB_HOST=localhost storage-track-service
+# Terminal 2
+STORAGE_TRACK_SERVICE_ADDRESS=localhost:50051 storage-track-api
 ```
 
-The launcher selects and initializes the configured repository before serving
-the API. Set `STORAGE_TRACK_BACKEND=postgres` to use the PostgreSQL adapter.
-The launcher currently supports only `postgres`; adding another backend
-requires an adapter implementing `InventoryRepository`.
-Set `STORAGE_TRACK_DB_HOST`, `STORAGE_TRACK_DB_PORT`,
-`STORAGE_TRACK_DB_NAME`, `STORAGE_TRACK_DB_USER`, and
-`STORAGE_TRACK_DB_PASSWORD` to configure PostgreSQL. The HTTP listener defaults
+The gRPC service initializes the configured repository before listening.
+Set `STORAGE_TRACK_BACKEND=postgres` to use the PostgreSQL adapter (the only
+currently supported backend), and configure it with `STORAGE_TRACK_DB_HOST`,
+`STORAGE_TRACK_DB_PORT`, `STORAGE_TRACK_DB_NAME`, `STORAGE_TRACK_DB_USER`, and
+`STORAGE_TRACK_DB_PASSWORD`. The gRPC listener defaults to `0.0.0.0:50051`;
+override it with `STORAGE_TRACK_GRPC_HOST` and `STORAGE_TRACK_GRPC_PORT`.
+The REST API connects to `localhost:50051` by default; override this with
+`STORAGE_TRACK_SERVICE_ADDRESS`. Each API call has a five-second gRPC deadline,
+configurable with `STORAGE_TRACK_SERVICE_TIMEOUT`. The HTTP listener defaults
 to `0.0.0.0:5000`; override it with `STORAGE_TRACK_HOST` and
 `STORAGE_TRACK_PORT`.
+
+### Docker Compose
+
+Build and run the API, inventory service, and PostgreSQL in separate containers:
+
+```bash
+docker compose up --build -d
+```
+
+The REST API is available at `http://localhost:5000`; only it is published on
+the host. Compose waits for PostgreSQL and the gRPC service health checks before
+starting dependent containers. The default PostgreSQL password is intended for
+local development; set `POSTGRES_PASSWORD` to a secure value outside local use.
+Use `docker compose logs -f` to view logs and `docker compose down` to stop the
+containers. Add `-v` to `down` only when intentionally deleting the database
+volume.
+
+The protocol is defined in `src/service/inventory.proto`; generated Python
+stubs are checked in. Regenerate them after editing the protocol:
+
+```bash
+python3 -m pip install -e '.[dev]'
+python3 -m grpc_tools.protoc -Isrc --python_out=src --grpc_python_out=src --pyi_out=src src/service/inventory.proto
+```
 
 Available endpoints:
 

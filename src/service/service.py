@@ -25,6 +25,8 @@ class InventoryService:
         location_id: int | None = None,
         sub_location_id: int | None = None,
     ) -> InventoryItem:
+        if sub_location_id is not None and location_id is None:
+            raise ValueError("location_id is required with sub_location_id")
         item = InventoryItem(
             name=name,
             description=description,
@@ -33,9 +35,7 @@ class InventoryService:
             sub_location=None,
         )
         item = self.repository.add(item)
-        if item.id is not None and (location_id is not None or sub_location_id is not None):
-            if location_id is None:
-                raise ValueError("location_id is required with sub_location_id")
+        if item.id is not None and location_id is not None:
             moved = self.move_item(item.id, location_id, sub_location_id)
             if moved is not None:
                 return moved
@@ -51,6 +51,8 @@ class InventoryService:
     ) -> InventoryItem:
         if count <= 0:
             raise ValueError("count must be positive")
+        if sub_location_id is not None and location_id is None:
+            raise ValueError("location_id is required with sub_location_id")
         existing = self.repository.get_by_name(name)
         if existing is None:
             return self.add_item(
