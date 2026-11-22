@@ -15,7 +15,7 @@ service Inventory {
   rpc ListLocations(google.protobuf.Empty) returns (ListLocationsResponse);
   rpc GetLocation(IdRequest) returns (Location);
   rpc CreateLocation(NameRequest) returns (Location);
-  rpc RemoveLocation(IdRequest) returns (RemoveResponse);
+  rpc RemoveLocation(RemoveLocationRequest) returns (RemoveResponse);
   rpc CreateSubLocation(CreateSubLocationRequest) returns (SubLocation);
   rpc RemoveSubLocation(RemoveSubLocationRequest) returns (RemoveResponse);
 }
@@ -26,6 +26,11 @@ message IdRequest {
 
 message NameRequest {
   string name = 1;
+}
+
+message RemoveLocationRequest {
+  int64 id = 1;
+  bool cascade = 2;
 }
 
 message AddItemRequest {

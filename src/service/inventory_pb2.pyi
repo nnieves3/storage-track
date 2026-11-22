@@ -19,6 +19,14 @@ class NameRequest(_message.Message):
     name: str
     def __init__(self, name: _Optional[str] = ...) -> None: ...
 
+class RemoveLocationRequest(_message.Message):
+    __slots__ = ("id", "cascade")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    CASCADE_FIELD_NUMBER: _ClassVar[int]
+    id: int
+    cascade: bool
+    def __init__(self, id: _Optional[int] = ..., cascade: _Optional[bool] = ...) -> None: ...
+
 class AddItemRequest(_message.Message):
     __slots__ = ("name", "count", "description", "location_id", "sub_location_id")
     NAME_FIELD_NUMBER: _ClassVar[int]
