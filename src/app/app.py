@@ -1,6 +1,7 @@
+from pathlib import Path
 from typing import Protocol
 
-from flask import Flask, Response, jsonify, request
+from flask import Flask, Response, jsonify, request, send_from_directory
 
 from service import InventoryItem, Location, SubLocation
 from service.grpc_client import ServiceUnavailableError
@@ -28,7 +29,7 @@ class InventoryApi(Protocol):
     def list_locations(self) -> list[Location]: ...
     def get_location(self, location_id: int) -> Location | None: ...
     def create_location(self, name: str) -> Location: ...
-    def remove_location(self, location_id: int) -> bool: ...
+    def remove_location(self, location_id: int, cascade: bool = False) -> bool: ...
     def create_sub_location(
         self, location_id: int, name: str
     ) -> SubLocation | None: ...
@@ -38,7 +39,16 @@ class InventoryApi(Protocol):
 
 
 def create_app(service: InventoryApi) -> Flask:
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="static/assets", static_url_path="/assets")
+
+    @app.get("/")
+    def frontend() -> Response | tuple[Response, int]:
+        if app.static_folder is None:
+            return jsonify(error="frontend build is not installed"), 404
+        index_file = Path(app.static_folder).parent / "index.html"
+        if not index_file.is_file():
+            return jsonify(error="frontend build is not installed"), 404
+        return send_from_directory(index_file.parent, index_file.name)
 
     @app.errorhandler(ServiceUnavailableError)
     def handle_service_unavailable(
@@ -178,7 +188,12 @@ def create_app(service: InventoryApi) -> Flask:
 
     @app.delete("/locations/<int:location_id>")
     def remove_location(location_id: int) -> tuple[Response, int]:
-        if not service.remove_location(location_id):
+        cascade_value = request.args.get("cascade", "false").lower()
+        if cascade_value not in {"true", "false"}:
+            raise ValueError("cascade must be 'true' or 'false'")
+        if not service.remove_location(
+            location_id, cascade=cascade_value == "true"
+        ):
             return jsonify(error="location not found"), 404
         return Response(status=204), 204
 

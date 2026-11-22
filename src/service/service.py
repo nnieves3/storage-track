@@ -147,8 +147,8 @@ class InventoryService:
     def list_locations(self) -> list[Location]:
         return self.repository.list_locations()
 
-    def remove_location(self, location_id: int) -> bool:
-        return self.repository.remove_location(location_id)
+    def remove_location(self, location_id: int, cascade: bool = False) -> bool:
+        return self.repository.remove_location(location_id, cascade=cascade)
 
     def create_sub_location(
         self, location_id: int, name: str

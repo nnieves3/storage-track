@@ -88,7 +88,9 @@ curl -X POST http://127.0.0.1:5000/locations/1/sub-locations \
   -d '{"name":"Shelf 1"}'
 ```
 
-Items use location objects returned by the API. Add or move an item by IDs:
+Items use location objects returned by the API. In the React UI, choose
+`Add new…` in an item's sub-location menu to create a sub-location and assign
+the new item to it. Add or move an item through the API using IDs:
 
 ```bash
 curl -X POST http://127.0.0.1:5000/items \
@@ -140,6 +142,12 @@ Use `docker compose logs -f` to view logs and `docker compose down` to stop the
 containers. Add `-v` to `down` only when intentionally deleting the database
 volume.
 
+The React/Vite frontend is built into the API image and served at
+`http://localhost:5000/`. For frontend development, start the backend as above,
+then run `cd frontend && npm ci && npm run dev`; Vite proxies REST requests to
+`http://127.0.0.1:5000` by default. Override the proxy target with
+`VITE_API_TARGET` if needed.
+
 The protocol is defined in `src/service/inventory.proto`; generated Python
 stubs are checked in. Regenerate them after editing the protocol:
 
@@ -163,7 +171,7 @@ Available endpoints:
 | `GET` | `/locations` | List locations and their sub-locations |
 | `GET` | `/locations/<location_id>` | Get a location and its sub-locations |
 | `POST` | `/locations` | Create a location (also creates its default `Other` sub-location) |
-| `DELETE` | `/locations/<location_id>` | Remove a location if no items are assigned to it |
+| `DELETE` | `/locations/<location_id>` | Remove an empty location; non-empty locations require `?cascade=true` to also delete their items |
 | `POST` | `/locations/<location_id>/sub-locations` | Create a sub-location |
 | `DELETE` | `/locations/<location_id>/sub-locations/<sub_location_id>` | Remove a sub-location if it is not the default and has no assigned items |
 
@@ -173,4 +181,10 @@ Example add request:
 curl -X POST http://127.0.0.1:5000/items \
   -H 'Content-Type: application/json' \
   -d '{"name":"Camping lantern","count":2,"location_id":1,"sub_location_id":2}'
+```
+
+Deleting a non-empty location requires an explicit cascade query parameter:
+
+```bash
+curl -X DELETE 'http://127.0.0.1:5000/locations/1?cascade=true'
 ```
