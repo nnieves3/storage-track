@@ -1,7 +1,25 @@
-frontend/node_modules/
-frontend/dist/
-src/app/static/
-build/
-*.egg-info/
+# Python
+.venv/
 __pycache__/
 *.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Frontend
+node_modules/
+
+# Local configuration and logs
+.env
+.env.*
+!.env.example
+*.log
+
+# OS files
+.DS_Store
